@@ -362,12 +362,40 @@
         </div>
     </div>
 
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDN5XNVZHGM2ZnQbFwtU5X_ZmpPMG7iuVw",
+          authDomain: "formapp-fa5bf.firebaseapp.com",
+          databaseURL: "https://formapp-fa5bf-default-rtdb.firebaseio.com",
+          projectId: "formapp-fa5bf",
+          storageBucket: "formapp-fa5bf.firebasestorage.app",
+          messagingSenderId: "388421635704",
+          appId: "1:388421635704:web:b2886874f514a9b8c2678d"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
           e.preventDefault();
       
           const formData = new FormData(this);
           const data = Object.fromEntries(formData);
+      
+          // Save to Firebase
+          try {
+            await db.ref('feedbacks').push(data);
+          } catch (err) {
+            alert('Could not save feedback to database!');
+            console.error(err);
+            return;
+          }
       
           try {
             const response = await fetch("https://sms-api-6pba.onrender.com/send-sms", {
